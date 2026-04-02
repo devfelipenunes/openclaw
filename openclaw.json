@@ -1,0 +1,12 @@
+{
+  "gateway": {
+    "port": 18789
+  },
+  "models": {
+    "default": "gpt-4o-mini",
+    "mappings": {
+      "analyze": "gpt-4o-mini",
+      "scan": "gpt-4o-mini"
+    }
+  }
+}
