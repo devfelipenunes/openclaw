@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  openclaw-gateway:
+    image: openclaw/openclaw:latest
+    ports:
+      - "18789:18789"
+    volumes:
+      - ./skills:/app/skills
+      - ./.env:/app/.env
+    environment:
+      - OPENCLAW_PORT=18789
+    depends_on:
+      - chromadb
+      - blockchain-tools
+
+  chromadb:
+    image: chromadb/chroma:latest
+    volumes:
+      - ./data/chroma:/chroma/chroma
+    ports:
+      - "8000:8000"
+
+  blockchain-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile.tools
+    volumes:
+      - .:/app
+    env_file:
+      - .env
