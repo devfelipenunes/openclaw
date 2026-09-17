@@ -1,6 +1,8 @@
-openai
-chromadb
-python-dotenv
-requests
-pytest
-arxiv
+openai>=1.0.0
+chromadb>=1.5.0
+python-dotenv>=1.0.0
+requests>=2.25.0
+pytest>=7.0.0
+arxiv>=2.0.0
+pypdf2>=3.0.0
+pdfplumber>=0.10.0

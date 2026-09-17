@@ -3,10 +3,13 @@
     "port": 18789
   },
   "models": {
-    "default": "gpt-4o-mini",
+    "default": "deepseek-chat",
     "mappings": {
-      "analyze": "gpt-4o-mini",
-      "scan": "gpt-4o-mini"
+      "scan": "deepseek-chat",
+      "analyze": "deepseek-chat",
+      "debate": "deepseek-chat",
+      "review": "deepseek-chat",
+      "write": "deepseek-chat"
     }
   }
 }
