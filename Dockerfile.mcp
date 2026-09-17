@@ -1,0 +1,12 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Instala Academic Hunter com suporte MCP
+COPY pesquisa_academica /app/pesquisa_academica
+RUN pip install -e /app/pesquisa_academica --no-cache-dir
+
+ENV PYTHONPATH=/app/pesquisa_academica/src
+
+# Expõe o servidor MCP via stdio
+CMD ["python", "-m", "academic_hunter.interfaces.mcp.server"]

@@ -1,0 +1,31 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Instala dependências do sistema
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# =============================================
+# Academic Hunter
+# =============================================
+COPY pesquisa_academica /app/pesquisa_academica
+RUN pip install -e /app/pesquisa_academica --no-cache-dir
+
+# =============================================
+# OpenClaw Research Squad
+# =============================================
+COPY openclaw/requirements.txt /app/openclaw/
+RUN pip install -r /app/openclaw/requirements.txt --no-cache-dir
+
+COPY openclaw/ /app/openclaw/
+
+# PYTHONPATH para encontrar ambos os projetos
+ENV PYTHONPATH=/app/openclaw/src:/app/pesquisa_academica/src
+ENV DB_PATH=/app/openclaw/data/chroma
+ENV OBSIDIAN_PATH=/obsidian
+
+WORKDIR /app/openclaw
+
+CMD ["python", "-m", "src.main", "--topic", "ZK-Rollups", "--pipeline", "quick_scan"]

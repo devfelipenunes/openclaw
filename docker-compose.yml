@@ -1,5 +1,7 @@
 version: '3.8'
+
 services:
+  # ─── Gateway OpenClaw (Node.js) ───
   openclaw-gateway:
     image: openclaw/openclaw:latest
     ports:
@@ -11,20 +13,56 @@ services:
       - OPENCLAW_PORT=18789
     depends_on:
       - chromadb
-      - blockchain-tools
+      - research-squad
+    restart: unless-stopped
 
+  # ─── Vector Database (ChromaDB) ───
   chromadb:
     image: chromadb/chroma:latest
     volumes:
       - ./data/chroma:/chroma/chroma
     ports:
       - "8000:8000"
+    restart: unless-stopped
 
-  blockchain-tools:
+  # ─── Academic Hunter MCP Server ───
+  academic-hunter-mcp:
     build:
       context: .
-      dockerfile: Dockerfile.tools
+      dockerfile: Dockerfile.mcp
     volumes:
-      - .:/app
+      - ./pesquisa_academica/config.json:/app/config.json
+      - ./pesquisa_academica/results:/app/results
+      - /l/disk0/fnunes/obsidian:/obsidian
+    environment:
+      - PYTHONPATH=/app/pesquisa_academica/src
+    restart: unless-stopped
+
+  # ─── Research Squad (Python) ───
+  research-squad:
+    build:
+      context: .
+      dockerfile: Dockerfile.squad
+    volumes:
+      - ./data:/app/openclaw/data
+      - ./pesquisa_academica:/app/pesquisa_academica
+      - /l/disk0/fnunes/obsidian:/obsidian
     env_file:
       - .env
+    environment:
+      - DB_PATH=/app/openclaw/data/chroma
+      - OBSIDIAN_PATH=/obsidian
+    depends_on:
+      - chromadb
+      - academic-hunter-mcp
+    restart: unless-stopped
+
+  # ─── PDF Worker (opcional, processamento pesado) ───
+  pdf-worker:
+    image: python:3.10-slim
+    command: ["sleep", "infinity"]
+    volumes:
+      - ./data/papers:/data/papers
+    profiles:
+      - pdf-worker
+    restart: unless-stopped
